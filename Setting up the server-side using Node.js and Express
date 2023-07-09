@@ -1,0 +1,28 @@
+// server.js
+
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+// Serve static files
+app.use(express.static('public'));
+
+// Handle socket connections
+io.on('connection', socket => {
+  // Handle chat messages
+  socket.on('chat message', message => {
+    io.emit('chat message', message);
+  });
+  
+  // Handle video/audio streaming
+  socket.on('stream', stream => {
+    socket.broadcast.emit('stream', stream);
+  });
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
