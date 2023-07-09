@@ -1,0 +1,23 @@
+// client.js
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  .then(stream => {
+    const videoElement = document.createElement('video');
+    videoElement.srcObject = stream;
+    videoElement.play();
+    
+    // Emit the video stream
+    const socket = io();
+    socket.emit('stream', stream);
+    
+    // Handle incoming video streams
+    socket.on('stream', stream => {
+      const videoElement = document.createElement('video');
+      videoElement.srcObject = stream;
+      videoElement.play();
+      document.body.appendChild(videoElement);
+    });
+  })
+  .catch(error => {
+    console.error('Error accessing media devices:', error);
+  });
